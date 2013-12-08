@@ -12,6 +12,7 @@ import Prelude.List
 import Prelude.Maybe
 import Prelude.Monad
 import Prelude.Applicative
+import Prelude.Category
 import Prelude.Functor
 import Prelude.Either
 import Prelude.Vect
@@ -334,7 +335,7 @@ instance Traversable (Vect n) where
     traverse f (x::xs) = [| Vect.(::) (f x) (traverse f xs) |]
 
 ---- some mathematical operations
----- XXX this should probably go some place else, 
+---- XXX this should probably go some place else,
 pow : (Num a) => a -> Nat -> a
 pow x Z = 1
 pow x (S n) = x * (pow x n)
@@ -376,7 +377,7 @@ instance Enum Integer where
   enumFromThen n inc = n :: enumFromThen (inc + n) inc
   enumFromTo n m = if n <= m
                    then go (natRange (S (cast {to = Nat} (m - n))))
-                   else []          
+                   else []
     where go : List Nat -> List Integer
           go [] = []
           go (x :: xs) = n + cast x :: go xs
@@ -392,7 +393,7 @@ instance Enum Int where
   toNat n = cast n
   fromNat n = cast n
   enumFromThen n inc = n :: enumFromThen (inc + n) inc
-  enumFromTo n m = if n <= m 
+  enumFromTo n m = if n <= m
                    then go (natRange (S (cast {to = Nat} (m - n))))
                    else []
     where go : List Nat -> List Int
@@ -565,4 +566,3 @@ readFile fn = do h <- openFile fn Read
           if not x then do l <- fread h
                            readFile' h (contents ++ l)
                    else return contents
-
