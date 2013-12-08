@@ -3,18 +3,20 @@ module Prelude.Category
 infixr 1 ~>
 infixl 9 <.>
 
-class Category (obj : Type) where
-    (~>) : obj -> obj -> Type
-    (<.>) : (y ~> z) -> (x ~> y) -> (x ~> z)
-    idC : x ~> x
+class Category (obj : Type) (mor : obj -> obj -> Type) where
+    (<.>) : (mor y z) -> (mor x y) -> (mor x z)
+    idC : mor x x
 
-{-class Category obj => VerifiedCategory (obj : Type) where
-    leftIdentity : (m : x ~> y) -> idC <.> m = m
-    rightIdentity : (m : x ~> y) -> m <.> idC = m
-    associativity : (f : z ~> w) -> (g : y ~> z) -> (h : x ~> y) -> f <.> (g <.> h) = (f <.> g) <.> h-}
+(~>) : Category obj mor => obj -> obj -> Type
+(~>) = mor
 
-instance Category Type where
-    a ~> b = a -> b
+
+class Category obj mor => VerifiedCategory (obj : Type) (mor : obj -> obj -> Type) where
+    leftIdentity : (m : mor x y) -> idC <.> m = m
+    rightIdentity : (m : mor x y) -> m <.> idC = m
+    associativity : (f : mor z w) -> (g : mor y z) -> (h : mor x y) -> f <.> (g <.> h) = (f <.> g) <.> h
+
+instance Category Type (let mor x y = x -> y in mor) where
     (<.>) = (.)
     idC = id
 
